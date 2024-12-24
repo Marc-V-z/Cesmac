@@ -27,5 +27,5 @@ class DirectoryManager:
             return str(e)
         
     def is_git_initialized(self):
-        return os.path.isdir(os.path.join(self.directory_manager.current_directory, ".git"))
+        return os.path.isdir(os.path.join(self.current_directory, ".git"))
     

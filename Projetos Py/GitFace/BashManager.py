@@ -13,7 +13,18 @@ class BashManager:
     def Send_Command(self, cmd):
         result = subprocess.run([self.mingw64_path, '-c', cmd], text=True, capture_output=True)
         return result.stdout + result.stderr
-
-    def Read_Command(self):
-        return "Função para ler comandos ainda não implementada"
     
+    def is_in_git_repo(self,file_path): 
+        try: 
+            repo_root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'],stderr=subprocess.DEVNULL, cwd=os.path.dirname(file_path)).strip().decode('utf-8') 
+            return file_path.startswith(repo_root) 
+        except subprocess.CalledProcessError: 
+            return False
+        
+    def find_git_repo(self, path): 
+        #path = self.current_directory 
+        while path != os.path.dirname(path): # Enquanto não atingir a raiz do sistema de arquivos 
+            if self.is_in_git_repo(path): 
+                return True 
+            path = os.path.dirname(path) 
+        return False
