@@ -1,0 +1,29 @@
+novo_usuario = input("Digite o novo nome de usuário: ")
+        nova_senha = input("Digite a nova senha: ")
+        novo_credenciais = f"novo,{novo_usuario},{nova_senha}"
+        conexao.send(novo_credenciais.encode())
+        resposta = conexao.recv(1024)
+
+
+data = conexao.recv(1024)
+        if not data:
+            break
+        
+        # Verificação de login
+        if ',' in data.decode():
+            partes = data.decode().split(',')
+            if partes[0] == "novo":
+                novo_usuario, nova_senha = partes[1], partes[2]
+                if novo_usuario in usuarios:
+                    resposta = "Usuário já existe"
+                else:
+                    usuarios[novo_usuario] = nova_senha
+                    resposta = "Novo usuário criado com sucesso"
+                conexao.send(resposta.encode())
+            else:
+                usuario, senha = partes[0], partes[1]
+                if usuario in usuarios and usuarios[usuario] == senha:
+                    resposta = "Login realizado com sucesso"
+                else:
+                    resposta = "Falha no login"
+                conexao.send(resposta.encode())
